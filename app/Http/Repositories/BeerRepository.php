@@ -17,7 +17,7 @@ class BeerRepository implements BeerRepositoryInterface
 
     public function paginate(int $page = 1): Collection
     {
-        if (!$this->endpoints['get']) {
+        if (! $this->endpoints['get']) {
             throw new \RuntimeException('The endpoint get is not defined');
         }
 
@@ -28,12 +28,9 @@ class BeerRepository implements BeerRepositoryInterface
         }
     }
 
-    /**
-     * @return \Closure
-     */
     private function mapResponse(): \Closure
     {
-        return static fn($response) => new Beer(
+        return static fn ($response) => new Beer(
             $response['id'],
             $response['name']
         );

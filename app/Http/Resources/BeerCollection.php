@@ -18,28 +18,31 @@ class BeerCollection extends ResourceCollection
         $beerRequest = new BeerRequest($request);
 
         return [
-           'data' => $this->collection,
+            'data' => $this->collection,
             'links' => [
                 'self' => $this->getSelfLink($beerRequest),
                 'next' => $this->getNextLink($beerRequest),
-                'prev' => $this->getPrevLink($beerRequest)
+                'prev' => $this->getPrevLink($beerRequest),
             ],
         ];
     }
 
-    private function getSelfLink(BeerRequest $request): ?string {
-        return route('api.beers', [ 'page' => $request->getPage() ]);
+    private function getSelfLink(BeerRequest $request): ?string
+    {
+        return route('api.beers', ['page' => $request->getPage()]);
     }
 
-    private function getPrevLink(BeerRequest $request): ?string {
+    private function getPrevLink(BeerRequest $request): ?string
+    {
         if ($request->getPage() - 1 <= 0) {
             return null;
         }
 
-        return route('api.beers', [ 'page' => $request->getPage() - 1 ]);
+        return route('api.beers', ['page' => $request->getPage() - 1]);
     }
 
-    private function getNextLink(BeerRequest $request): ?string {
-        return route('api.beers', [ 'page' => $request->getPage() + 1 ]);
+    private function getNextLink(BeerRequest $request): ?string
+    {
+        return route('api.beers', ['page' => $request->getPage() + 1]);
     }
 }

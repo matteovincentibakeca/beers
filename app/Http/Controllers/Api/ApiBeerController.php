@@ -23,12 +23,12 @@ class ApiBeerController extends Controller
             return \response()->json([
                 'success' => true,
                 'message' => 'OK',
-                'data' => new BeerCollection($this->service->getPaginatedBeerList(new BeerRequest($request)))
+                'data' => new BeerCollection($this->service->getPaginatedBeerList(new BeerRequest($request))),
             ]);
         } catch (\Exception $exception) {
             return \response()->json([
                 'success' => false,
-                'message' => $exception->getMessage()
+                'message' => $exception->getMessage(),
             ]);
         }
     }
