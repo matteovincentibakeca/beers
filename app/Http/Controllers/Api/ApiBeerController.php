@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 
 class ApiBeerController extends Controller
 {
-    private const CACHE_DURATION = 10;
+    private const CACHE_DURATION = 1;
 
     /**
      * @param BeerServiceInterface $service

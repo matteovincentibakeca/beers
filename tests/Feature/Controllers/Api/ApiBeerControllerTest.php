@@ -78,6 +78,19 @@ class ApiBeerControllerTest extends TestCase
 
     public function testCacheExpiry()
     {
-        $this->markTestIncomplete('This test has not been implemented yet.');
+        $this->mock(BeerServiceInterface::class, function ($mock) {
+            $mock->shouldReceive('getPaginatedBeerList')
+                ->times(2)  // We expect it to be called twice
+                ->andReturn(collect([]));
+        });
+
+        // First call
+        $this->authenticatedJsonGet('/api/beers');
+
+        // Sleep for a little over 1 minute to let the cache expire
+        sleep(65);
+
+        // Second call
+        $this->authenticatedJsonGet('/api/beers');
     }
 }
