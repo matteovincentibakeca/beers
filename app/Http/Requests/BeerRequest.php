@@ -10,6 +10,6 @@ class BeerRequest
 
     public function getPage(): int
     {
-        return (int) $this->request->page ?: 1;
+        return (int) $this->request->get('page', 1);
     }
 }
