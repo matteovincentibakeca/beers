@@ -18,6 +18,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/beers', \App\Http\Controllers\Api\ApiBeerController::class)
-    ->name('api.beers.index')
+Route::get('/beers', \App\Http\Controllers\Api\ApiBeerController::class)->name('api.beers')
     ->middleware(['auth:sanctum']);

@@ -19,11 +19,16 @@ class ApiBeerController extends Controller
      */
     public function __invoke(Request $request): \Illuminate\Http\JsonResponse
     {
+        $beerRequest = new BeerRequest($request);
+        $page = $beerRequest->getPage();
+
         try {
             return \response()->json([
                 'success' => true,
                 'message' => 'OK',
-                'data' => new BeerCollection($this->service->getPaginatedBeerList(new BeerRequest($request))),
+                'data' => \Cache::remember("beers:$page", now()->addMinutes(15), function () use ($beerRequest) {
+                    return new BeerCollection($this->service->getPaginatedBeerList($beerRequest));
+                }),
             ]);
         } catch (\Exception $exception) {
             return \response()->json([

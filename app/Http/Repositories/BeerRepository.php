@@ -21,18 +21,16 @@ class BeerRepository implements BeerRepositoryInterface
             throw new \RuntimeException('The endpoint get is not defined');
         }
 
-        try {
-            return \Http::get($this->endpoints['get'], ['page' => $page])->collect()->map($this->mapResponse());
-        } catch (\Exception $exception) {
-            dd($exception);
-        }
+        return \Http::get($this->endpoints['get'], ['page' => $page])->collect()->map($this->mapResponse());
     }
 
     private function mapResponse(): \Closure
     {
         return static fn ($response) => new Beer(
             $response['id'],
-            $response['name']
+            $response['name'],
+            $response['description'],
+            $response['image_url']
         );
     }
 }
