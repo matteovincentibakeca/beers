@@ -22,9 +22,13 @@ const router = createRouter({
 });
 
 const checkAuthentication = async () => {
-    await axios.get('/sanctum/csrf-cookie');
-    const checkAuth = await axios.get('/api/user');
-    return checkAuth.status === 200;
+    try {
+        await axios.get('/sanctum/csrf-cookie');
+        const checkAuth = await axios.get('/api/user').catch(e => e);
+        return checkAuth.status === 200;
+    } catch (e) {
+        throw e
+    }
 };
 
 router.beforeEach(async (to, from, next) => {
@@ -39,8 +43,16 @@ router.beforeEach(async (to, from, next) => {
             next();
         }
     } catch (error) {
-        next({ path: '/login', query: { redirect: to.fullPath } });
+        if (error.response && error.response.status === 401) {
+            // Handle 401 error specifically. For example, you might want to show a notification.
+            next({ path: '/login', query: { redirect: to.fullPath } });
+        } else {
+            // Handle other errors.
+            console.error("Error while checking authentication:", error);
+            next({ path: '/error' }); // Consider redirecting to a general error page
+        }
     }
 });
+
 
 export default router;
