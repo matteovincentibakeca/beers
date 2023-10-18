@@ -3,11 +3,18 @@
 namespace App\Http\Resources;
 
 use App\Http\Requests\BeerRequest;
+use App\Http\Services\Interfaces\BeerServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class BeerCollection extends ResourceCollection
 {
+    public function __construct($resource, protected readonly BeerRequest $beerRequest)
+    {
+        parent::__construct($resource);
+    }
+
+
     /**
      * Transform the resource collection into an array.
      *
@@ -15,34 +22,37 @@ class BeerCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        $beerRequest = new BeerRequest($request);
-
         return [
             'data' => $this->collection,
             'links' => [
-                'self' => $this->getSelfLink($beerRequest),
-                'next' => $this->getNextLink($beerRequest),
-                'prev' => $this->getPrevLink($beerRequest),
+                'self' => $this->getSelfLink(),
+                'next' => $this->getNextLink(),
+                'prev' => $this->getPrevLink(),
             ],
         ];
     }
 
-    private function getSelfLink(BeerRequest $request): ?string
+    private function getSelfLink(): ?string
     {
-        return route('api.beers', ['page' => $request->getPage()]);
+        return route('api.beers', [
+            'page' => $this->beerRequest->getPage()
+        ]);
     }
 
-    private function getPrevLink(BeerRequest $request): ?string
+    private function getPrevLink(): ?string
     {
-        if ($request->getPage() - 1 <= 0) {
+        $prevPage = $this->beerRequest->getPage() - 1;
+        return $prevPage <= 0 ? null : route('api.beers', ['page' => $prevPage]);
+    }
+
+    private function getNextLink(): ?string
+    {
+        $nextPage = $this->beerRequest->getPage() + 1;
+
+        if ($this->resource->count() === 0) {
             return null;
         }
 
-        return route('api.beers', ['page' => $request->getPage() - 1]);
-    }
-
-    private function getNextLink(BeerRequest $request): ?string
-    {
-        return route('api.beers', ['page' => $request->getPage() + 1]);
+        return route('api.beers', ['page' => $nextPage]);
     }
 }
