@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Http\Repositories\BeerRepository;
+use App\Http\Repositories\Interfaces\BeerRepositoryInterface;
+use App\Http\Services\BeerService;
+use App\Http\Services\Interfaces\BeerServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +15,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(BeerServiceInterface::class, BeerService::class);
+        $this->app->bind(BeerRepositoryInterface::class, BeerRepository::class);
     }
 
     /**
