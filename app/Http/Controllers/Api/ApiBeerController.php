@@ -7,6 +7,7 @@ use App\Http\Requests\BeerRequest;
 use App\Http\Resources\BeerCollection;
 use App\Http\Services\Interfaces\BeerServiceInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class ApiBeerController extends Controller
 {
@@ -24,13 +25,11 @@ class ApiBeerController extends Controller
      */
     public function __invoke(BeerRequest $beerRequest): \Illuminate\Http\JsonResponse
     {
-        $page = $beerRequest->getPage();
-
         try {
             return \response()->json([
                 'success' => true,
                 'message' => 'OK',
-                'data' => $this->getData($page, $beerRequest),
+                'data' => new BeerCollection($this->getData($beerRequest->getPage(), $beerRequest), $beerRequest),
             ]);
         } catch (\Exception $exception) {
             return \response()->json([
@@ -46,10 +45,10 @@ class ApiBeerController extends Controller
      * @param BeerRequest $beerRequest
      * @return mixed
      */
-    private function getData(int $page, BeerRequest $beerRequest): BeerCollection
+    private function getData(int $page, BeerRequest $beerRequest): Collection
     {
         return \Cache::remember("beers:$page", now()->addMinutes(self::CACHE_DURATION), function () use ($beerRequest) {
-            return new BeerCollection($this->service->getPaginatedBeerList($beerRequest), $beerRequest);
+            return $this->service->getPaginatedBeerList($beerRequest);
         });
     }
 }
