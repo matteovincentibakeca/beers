@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::get('/beers', \App\Http\Controllers\Api\ApiBeerController::class)->name('api.beers')
-    ->middleware(['auth:sanctum']);
+Route::post('/login', \App\Http\Controllers\Api\Auth\ApiLoginController::class)->name('api.login');
+Route::middleware('auth:sanctum')->get('/beers', \App\Http\Controllers\Api\ApiBeerController::class)->name('api.beers');
+Route::middleware('auth:sanctum')->get('/user', fn (Request $request) => $request->user());

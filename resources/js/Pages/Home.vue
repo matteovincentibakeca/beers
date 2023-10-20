@@ -54,7 +54,9 @@ export default {
             this.selectedItem = item
         },
         fetchData: function (page=1) {
-            axios.get(`/api/beers?page=${page}`).then(({ data }) => {
+            axios.get(`/api/beers?page=${page || 1}`, {
+                headers: { Authorization: `Bearer ${window.localStorage.getItem('token')}` }
+            }).then(({ data }) => {
                 this.data = data.data
             })
         },

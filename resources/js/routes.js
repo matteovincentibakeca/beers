@@ -23,9 +23,7 @@ const router = createRouter({
 
 const checkAuthentication = async () => {
     try {
-        await axios.get('/sanctum/csrf-cookie');
-        const checkAuth = await axios.get('/api/user').catch(e => e);
-        return checkAuth.status === 200;
+        return !!window.localStorage.getItem('token');
     } catch (e) {
         throw e
     }

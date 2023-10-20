@@ -36,10 +36,12 @@
     import { ref } from 'vue'
     let errors = ref()
 
-    const submit = async (e) => {
-        await axios.get('/sanctum/csrf-cookie');
-        axios.post('/login', new FormData(e.target))
-            .then(async () => await router.push({path: '/'}))
-            .catch(e => errors = e.response.data.message)
+    const submit = (e) => {
+        axios.post('/api/login', new FormData(e.target))
+            .then(({ data }) => {
+                window.localStorage.setItem('token', data.data.token)
+                router.push({path: '/'})
+            })
+            .catch((e) => errors = e.response.data.message)
     }
 </script>
