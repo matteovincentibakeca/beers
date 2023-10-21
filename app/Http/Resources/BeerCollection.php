@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Http\Requests\BeerRequest;
-use App\Http\Services\Interfaces\BeerServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -13,7 +12,6 @@ class BeerCollection extends ResourceCollection
     {
         parent::__construct($resource);
     }
-
 
     /**
      * Transform the resource collection into an array.
@@ -35,13 +33,14 @@ class BeerCollection extends ResourceCollection
     private function getSelfLink(): ?string
     {
         return route('api.beers', [
-            'page' => $this->beerRequest->getPage()
+            'page' => $this->beerRequest->getPage(),
         ]);
     }
 
     private function getPrevLink(): ?string
     {
         $prevPage = $this->beerRequest->getPage() - 1;
+
         return $prevPage <= 0 ? null : route('api.beers', ['page' => $prevPage]);
     }
 

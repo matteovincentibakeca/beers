@@ -21,35 +21,24 @@ const router = createRouter({
     routes,
 });
 
-const checkAuthentication = async () => {
-    try {
-        return !!window.localStorage.getItem('token');
-    } catch (e) {
-        throw e
-    }
+const checkAuthentication = () => {
+    return new Promise((resolve, reject) => {
+        axios.get('/api/user', {
+            headers: { Authorization: `Bearer ${window.localStorage.getItem('token')}` }
+        }).then((response) => {
+            resolve(response.status === 200)
+        }).catch(() => reject(false))
+    })
 };
 
 router.beforeEach(async (to, from, next) => {
-    try {
-        const isAuthenticated = await checkAuthentication();
+    const isAuthenticated = await checkAuthentication().catch(err => err);
 
-        if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
-            next({ path: '/login', query: { redirect: to.fullPath } });
-        } else if (to.matched.some(record => record.meta.requiresGuest) && isAuthenticated) {
-            next({ path: '/' });
-        } else {
-            next();
-        }
-    } catch (error) {
-        if (error.response && error.response.status === 401) {
-            // Handle 401 error specifically. For example, you might want to show a notification.
-            next({ path: '/login', query: { redirect: to.fullPath } });
-        } else {
-            // Handle other errors.
-            console.error("Error while checking authentication:", error);
-            next({ path: '/error' }); // Consider redirecting to a general error page
-        }
+    if (to.meta.requiresAuth && !isAuthenticated) {
+        return next({ path: '/login', query: { redirect: to.fullPath }})
     }
+
+    next()
 });
 
 

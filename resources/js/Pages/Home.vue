@@ -46,9 +46,6 @@ export default {
             { immediate: true }
         )
     },
-    mounted() {
-       this.fetchData(this.$route.params?.page)
-    },
     methods: {
         select: function (item) {
             this.selectedItem = item

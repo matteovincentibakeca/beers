@@ -1,6 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\ApiBeerController;
+use App\Http\Controllers\Api\Auth\ApiLoginController;
+use App\Http\Controllers\Api\Auth\ApiUserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +16,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/login', \App\Http\Controllers\Api\Auth\ApiLoginController::class)->name('api.login');
-Route::middleware('auth:sanctum')->get('/beers', \App\Http\Controllers\Api\ApiBeerController::class)->name('api.beers');
-Route::middleware('auth:sanctum')->get('/user', fn (Request $request) => $request->user());
+Route::group(['as' => 'api.'], static function () {
+    Route::post('/login', ApiLoginController::class)->name('login')->middleware('guest');
+
+    /** Needs auth */
+    Route::middleware('auth:sanctum')->group(static function () {
+        Route::get('/beers', ApiBeerController::class)->name('beers');
+        Route::get('/user', ApiUserController::class)->name('user');
+    });
+});
